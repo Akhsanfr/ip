@@ -32,8 +32,8 @@ class Sem2 extends Component
         $mikro = bcmul($this->user->mikro, 3);
         $pajak = bcmul($this->user->pajak, 3);
         $ppkn = bcmul($this->user->ppkn, 2);
-        $pengakun2 = bcmul($this->user->pengakun2, 2);
-        $hukperus = bcmul($this->user->hukperus, 3);
+        $pengakun2 = bcmul($this->user->pengakun2, 3);
+        $hukperus = bcmul($this->user->hukperus, 2);
         $hukper = bcmul($this->user->hukper, 3);
         $piutang = bcmul($this->user->piutang, 3);
 

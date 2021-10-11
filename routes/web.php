@@ -19,10 +19,11 @@ use App\Http\Livewire\Nilai\Sem4;
 use App\Http\Livewire\Nilai\Sem5;
 use App\Http\Livewire\Nilai\Sem6;
 use App\Http\Livewire\Nilai\Skd;
+use App\Models\NilaiSemDua;
 
 // Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/', Dashboard::class)->name('dashboard')->middleware('user');
-Route::get('/instansi', Instansi::class)->name('instansi')->middleware('user');
+Route::get('/instansi', Instansi::class)->name('instansi')->middleware(['user', 'admin']);
 
 Route::get('/guest', function(){return view('guest');})->name('guest');
 Route::get('/auth/redirect', [AuthController::class, 'redirect'])->name('auth.login');
@@ -37,11 +38,27 @@ Route::get('/nilai-lima', Sem5::class)->middleware('user');
 Route::get('/nilai-enam', Sem6::class)->middleware('user');
 Route::get('/nilai-skd', Skd::class)->middleware('user');
 
-// Route::resource('nilai-sem-satu', NilaiSemSatuController::class)->middleware('user');
-// Route::resource('nilai-sem-dua', NilaiSemDuaController::class)->middleware('user');
-// Route::resource('nilai-sem-tiga', NilaiSemTigaController::class)->middleware('user');
-// Route::resource('nilai-sem-empat', NilaiSemEmpatController::class)->middleware('user');
-// Route::resource('nilai-sem-lima', NilaiSemLimaController::class)->middleware('user');
-// Route::resource('nilai-sem-enam', NilaiSemEnamController::class)->middleware('user');
-// Route::resource('skd', SkdController::class)->middleware('user');
+Route::get('/gen-sem-dua', function(){
+    $datas = NilaiSemDua::all();
+    foreach($datas as $data){
+        $id = $data->id;
+        $nilai_user = NilaiSemDua::find($id);
 
+        bcscale(100);
+        $pancasila = bcmul($data->pancasila, 2);
+        $bing = bcmul($data->bing, 2);
+        $mikro = bcmul($data->mikro, 3);
+        $pajak = bcmul($data->pajak, 3);
+        $ppkn = bcmul($data->ppkn, 2);
+        $pengakun2 = bcmul($data->pengakun2, 3);
+        $hukperus = bcmul($data->hukperus, 2);
+        $hukper = bcmul($data->hukper, 3);
+        $piutang = bcmul($data->piutang, 3);
+
+        $sks = 23;
+        $jumlah_nilai = bcadd(bcadd(bcadd(bcadd(bcadd(bcadd(bcadd(bcadd($pancasila, $bing),$mikro),$pajak),$ppkn), $pengakun2),$hukperus),$hukper),$piutang);
+        $nilai_user->ip = bcdiv($jumlah_nilai, $sks);
+        $nilai_user->save();
+    }
+
+})->middleware(['user', 'admin']);

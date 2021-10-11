@@ -55,8 +55,8 @@ class NilaiSemDuaController extends Controller
         $mikro = bcmul($request->mikro, 3);
         $pajak = bcmul($request->pajak, 3);
         $ppkn = bcmul($request->ppkn, 2);
-        $pengakun2 = bcmul($request->pengakun2, 2);
-        $hukperus = bcmul($request->hukperus, 3);
+        $pengakun2 = bcmul($request->pengakun2, 3);
+        $hukperus = bcmul($request->hukperus, 2);
         $hukper = bcmul($request->hukper, 3);
         $piutang = bcmul($request->piutang, 3);
 

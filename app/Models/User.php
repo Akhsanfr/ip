@@ -78,4 +78,17 @@ class User extends Authenticatable
         return $this->hasOne(Kelas::class, 'npm', 'npm');
     }
 
+    public function roles(){
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function admin(){
+        foreach($this->roles as $role){
+            if($role->nama == 'admin'){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
