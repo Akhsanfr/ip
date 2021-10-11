@@ -153,9 +153,9 @@ class Dashboard extends Component
                     array_push($data_pemilih_per_instansi, 'anonim');
                 } else {
                     array_push($data_pemilih_per_instansi, $user->user->name);
-                    // skd * 100% / 550
+                    // skd * 100% / 500
                 }
-                // $nilai_skd_100 = bcdiv($user->user->skd->skd ?? 0,550,100); // nilai dalam rentang 1-100
+                // $nilai_skd_100 = bcdiv($user->user->skd->skd ?? 0,500,100); // nilai dalam rentang 1-100
                 // $nilai_ipk_100 = bcdiv($user->user->ipk, 4, 100);
                 // $nilai_skd_proporsi = bcmul($this->proporsi_skd, $nilai_skd_100, 100);
                 // $nilai_ipk_proporsi = bcmul($this->proporsi_ipk, $nilai_ipk_100, 100);
@@ -182,7 +182,7 @@ class Dashboard extends Component
         $this->count_instansi = null;
     }
     public function ubah_ipk_skd($ipk, $skd){
-        $nilai_skd_100 = bcdiv($skd ?? 0,550,100); // nilai dalam rentang 1-100
+        $nilai_skd_100 = bcdiv($skd ?? 0,500,100); // nilai dalam rentang 1-100
         $nilai_ipk_100 = bcdiv($ipk, 4, 100); // nilai dalam rentang 1 - 100
         $nilai_skd_proporsi = bcmul($this->proporsi_skd, $nilai_skd_100, 100);
         $nilai_ipk_proporsi = bcmul($this->proporsi_ipk, $nilai_ipk_100, 100);
