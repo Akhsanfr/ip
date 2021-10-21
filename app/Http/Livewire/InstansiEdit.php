@@ -2,13 +2,16 @@
 
 namespace App\Http\Livewire;
 
+use Livewire\WithFileUploads;
 use Livewire\Component;
 use App\Models\Instansi;
 
 class InstansiEdit extends Component
 {
+    use WithFileUploads;
 
     public $instansi;
+    public $photo;
 
     protected $rules = [
         'instansi.nama' => 'required',
@@ -34,6 +37,7 @@ class InstansiEdit extends Component
         'instansi.ppt' => 'required',
         'instansi.yt' => 'required',
     ];
+
 
     public function mount($id){
         if($id==0){

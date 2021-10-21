@@ -2,16 +2,12 @@
 <div class="grid grid-cols-12 p-8 text-base-content gap-x-4 gap-y-4 items-stretch" x-data>
 
     <livewire:component.alert class="col-span-12">
-    <div class="col-span-12">
-        <a href="{{ route('instansi.view') }}" class="btn btn-primary btn-block">Daftar Instansi</a>
-    </div>
 
     <div class="col-span-12 md:col-span-6 md:row-span-4 card p-8 bg-base-200 flex flex-row items-center overflow-visible">
         <canvas id="myChart" ></canvas>
     </div>
 
     <div class="card col-span-8 md:col-span-4 bg-base-200 p-4 flex flex-col items-start overflow-visible">
-
         <div class="flex flex-row items-center space-x-2">
             {{-- Proporsi IPK --}}
             <div class="relative"  x-data="{
@@ -144,7 +140,7 @@
                 </div>
             </div>
             <div class="flex flex-col lg:flex-row flex-grow gap-4">
-                <div class="p-4 card bg-base-100 w-full lg:w-3/4 flex-shrink-0 lg:flex-shrink gap-x-2 grid grid-cols-custom-chart grid-rows-custom-chart items-center content-start" id="chart_instansi">
+                <div class="p-4 card bg-base-100 w-full lg:w-3/4 flex-shrink-0 lg:flex-shrink" id="chart_instansi">
                 </div>
                 <div class="flex-1 flex flex-col gap-4">
                     <div class="flex-row items-stretch gap-4 hidden lg:flex">
@@ -351,127 +347,165 @@ let ipk_saya;
 let data_pemilih = null
 let ipk_pemilih = null
 let chart_instansi = '';
-let data_instansi = '';
 window.addEventListener('count_instansi_update', event => {
-    // Set data dari fetch
     this.data_pemilih = event.detail.data_pemilih;
     this.ipk_pemilih = event.detail.ipk_pemilih;
     this.ipk_saya = event.detail.ipk_saya;
     this.pilihan_saya = event.detail.pilihan_saya;
-    this.data_instansi = event.detail.data;
-    let target = document.getElementById('chart_instansi');
+
+    const data_instansi = {
+        labels: event.detail.data.map(function(val){return val.nama_singkatan}),
+        datasets: [{
+            label: 'Data pemilih',
+            data: event.detail.data.map(function(val){return val.jumlah}),
+
+            backgroundColor: '#2aa79b',
+            borderColor: '#2aa79b',
+            borderWidth : 1,
+        }]
+    };
+    const config_instansi = {
+        type: 'bar',
+        data: data_instansi,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                },
+                x: {
+                    beginAtZero: true,
+                }
+            },
+            indexAxis : 'y',
+            plugins: {
+                title : {
+                    color : '#ffffff',
+                },
+                tooltip: {
+                    enabled : false,
+                    external: externalTooltipHandler
+                }
+            }
+        },
+
+    }
+    // Get target canvas
+    target = document.getElementById('chart_instansi');
     // Hapus canvas jika telah ada
     while(target.firstChild){
       target.firstChild.remove();
     }
-    // Siapkan grafik
-    let grafik = ``;
-    let instansi_peminat_terbanyak = this.data_instansi[0].jumlah;
-    this.data_instansi.forEach((i, index)=>{
-        pilihan_saya = ``
-        if(this.pilihan_saya == i.nama){
-            pilihan_saya = `text-primary`
-        }
-        grafik += `
-                <div data-tip="${i.nama}" class="tooltip tooltip-primary tooltip-right z-50 cursor-pointer flex justify-end ">
-                    <span onMouseover="showIpkInstansi(${index}, '${i.nama_singkatan}')" class="text-right instansi ${pilihan_saya}" data-index-instansi="${index}" data-nama-instansi="${i.nama_singkatan}">${i.nama_singkatan}</span>
-                </div>
-                <span>(${i.jumlah})</span>
-                <progress class="progress progress-primary cursor-pointer" value="${i.jumlah}" max="${instansi_peminat_terbanyak}"></progress>
-        `
-    })
-    // Isi grafik
-    target.innerHTML = grafik;
-    let instansis = document.querySelectorAll(`.instansi`);
+    // Buat canvas baru
+    const canvas_node = document.createElement('canvas');
+    const canvas_id = document.createAttribute("id");
+    // const canvas_height = document.createAttribute("height");
+    canvas_id.value = "chart_instansi_canvas";
+    // canvas_height.value = "200px";
+    canvas_node.setAttributeNode(canvas_id);
+    // canvas_node.setAttributeNode(canvas_height);
+    target.appendChild(canvas_node);
+
+    this.chart_instansi = new Chart(
+        document.getElementById('chart_instansi_canvas'),
+        config_instansi
+    );
+
 })
-function showIpkInstansi(index_instansi, nama_instansi){
 
-        // DATA PEMILIH
-        const target = document.querySelector('#nama_pemilih');
-        // Hapus data yang lama
-        while(target.firstChild){
-        target.firstChild.remove();
-        }
-        // Isi yang baru
-        // Loop data pemilih index_instansi X
-        this.data_pemilih[index_instansi].forEach((item)=>{
-            const li = document.createElement('li');
-            const text = document.createTextNode(item);
-            // Style
-            const li_class = document.createAttribute("class");
-            li_class.value = "hover:bg-primary-content hover:bg-opacity-25";
-            li.setAttributeNode(li_class);
-            li.appendChild(text);
-
-            target.appendChild(li);
-        });
+const externalTooltipHandler = (context) => {
+    const {chart, tooltip} = context;
 
 
-        // CANVAS IPK
-        const data_ipk = {
-            labels : this.ipk_pemilih[index_instansi].map((val, index) => {return index}),
-            datasets: [{
-                label: 'Nilai pemilih '+ nama_instansi,
-                data: this.ipk_pemilih[index_instansi],
-                backgroundColor: '#2aa79b',
-                borderColor: '#2aa79b',
-                borderWidth : 1,
-            }]
-        };
-        const config_ipk = {
-            type: 'line',
-            data: data_ipk,
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                    },
-                    x: {
-                        beginAtZero: true,
-                    }
+
+    // DATA PEMILIH
+    const target = document.querySelector('#nama_pemilih');
+    // Hapus data yang lama
+    while(target.firstChild){
+      target.firstChild.remove();
+    }
+    // Isi yang baru
+      // Get index instansi
+      instansi = tooltip.dataPoints[0].dataIndex;
+      // Loop data pemilih instansi X
+      this.data_pemilih[instansi].forEach((item)=>{
+        const li = document.createElement('li');
+        const text = document.createTextNode(item);
+        // Style
+        const li_class = document.createAttribute("class");
+        li_class.value = "hover:bg-primary-content hover:bg-opacity-25";
+        li.setAttributeNode(li_class);
+        li.appendChild(text);
+
+        target.appendChild(li);
+      });
+
+
+    // CANVAS IPK
+    const data_ipk = {
+        labels : this.ipk_pemilih[instansi].map((val, index) => {return index}),
+        datasets: [{
+            label: 'Nilai pemilih '+ tooltip.dataPoints[0].label,
+            data: this.ipk_pemilih[instansi],
+            backgroundColor: '#2aa79b',
+            borderColor: '#2aa79b',
+            borderWidth : 1,
+        }]
+    };
+    const config_ipk = {
+        type: 'line',
+        data: data_ipk,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
                 },
-                indexAxis : 'x',
-                plugins: {
-                    title : {
-                        color : '#ffffff',
-                    },
-                    tooltip: {
-                    }
+                x: {
+                    beginAtZero: true,
                 }
             },
+            indexAxis : 'x',
+            plugins: {
+                title : {
+                    color : '#ffffff',
+                },
+                tooltip: {
+                }
+            }
+        },
 
-        }
-        // Get target canvas
-        target_canvas = document.getElementById('chart_ipk');
-        // Hapus canvas jika telah ada
-        while(target_canvas.firstChild){
-        target_canvas.firstChild.remove();
-        }
-        // Buat canvas baru
-        const canvas_node = document.createElement('canvas');
-        const canvas_id = document.createAttribute("id");
-        canvas_id.value = "chart_ipk_canvas";
-        canvas_node.setAttributeNode(canvas_id);
-        target_canvas.appendChild(canvas_node);
+    }
+    // Get target canvas
+    target_canvas = document.getElementById('chart_ipk');
+    // Hapus canvas jika telah ada
+    while(target_canvas.firstChild){
+      target_canvas.firstChild.remove();
+    }
+    // Buat canvas baru
+    const canvas_node = document.createElement('canvas');
+    const canvas_id = document.createAttribute("id");
+    canvas_id.value = "chart_ipk_canvas";
+    canvas_node.setAttributeNode(canvas_id);
+    target_canvas.appendChild(canvas_node);
 
-        chart_ipk = new Chart(
-            document.getElementById('chart_ipk_canvas'),
-            config_ipk
-        );
+    this.chart_ipk = new Chart(
+        document.getElementById('chart_ipk_canvas'),
+        config_ipk
+    );
 
-        // PESAN PERINGKAT
+    // PESAN PERINGKAT
 
-        let ipk_gabungan = [];
-        ipk_pemilih = this.ipk_pemilih[index_instansi];
-        ipk_saya = this.ipk_saya;
-        ipk_gabungan = [...ipk_pemilih];
-        ipk_gabungan.push(ipk_saya);
-        ipk_gabungan.sort();
-        ipk_gabungan.reverse();
-        rank = ipk_gabungan.indexOf(ipk_saya);
-        pesan_rank = document.getElementById('pesan_rank');
-        pesan_rank.innerHTML = `<p class="text-base-content">Jika kamu memilih <span class="font-bold">${nama_instansi}</span> sekarang, kamu akan berada di peringkat ${rank + 1}</p>`
-        }
+    let ipk_gabungan = [];
+    ipk_pemilih = this.ipk_pemilih[instansi];
+    ipk_saya = this.ipk_saya;
+    ipk_gabungan = [...ipk_pemilih];
+    ipk_gabungan.push(ipk_saya);
+    ipk_gabungan.sort();
+    ipk_gabungan.reverse();
+    rank = ipk_gabungan.indexOf(ipk_saya);
+    pesan_rank = document.getElementById('pesan_rank');
+    pesan_rank.innerHTML = `<p class="text-base-content">Jika kamu memilih <span class="font-bold">${tooltip.dataPoints[0].label}</span> sekarang, kamu akan berada di peringkat ${rank + 1}</p>`
+};
+
 
 
 </script>

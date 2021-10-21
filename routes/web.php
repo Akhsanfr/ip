@@ -13,6 +13,7 @@ use App\Http\Controllers\SkdController;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Instansi;
 use App\Http\Livewire\InstansiEdit;
+use App\Http\Livewire\InstansiView;
 use App\Http\Livewire\Nilai\Sem1;
 use App\Http\Livewire\Nilai\Sem2;
 use App\Http\Livewire\Nilai\Sem3;
@@ -26,6 +27,7 @@ use App\Models\NilaiSemDua;
 Route::get('/', Dashboard::class)->name('dashboard')->middleware('user');
 Route::get('/instansi', Instansi::class)->name('instansi')->middleware(['user', 'admin']);
 Route::get('/instansi/edit/{id}', InstansiEdit::class)->name('instansi.edit')->middleware(['user', 'admin']);
+Route::get('/instansi/view', InstansiView::class)->name('instansi.view')->middleware('user');
 
 Route::get('/guest', function(){return view('guest');})->name('guest');
 Route::get('/auth/redirect', [AuthController::class, 'redirect'])->name('auth.login');

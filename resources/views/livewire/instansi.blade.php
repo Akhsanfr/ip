@@ -1,7 +1,7 @@
 <div class="p-8">
     <div class="card shadow-xl p-8 bg-base-200">
         <a href="{{ route('instansi.edit', 0) }}" class="btn btn-primary">Tambah</a>
-        <div class=" overflow-x-auto">
+        <div class="overflow-x-auto">
             <table class="table table-compact table-zebra">
                 <thead>
                     <tr>

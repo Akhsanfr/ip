@@ -18,6 +18,12 @@ module.exports = {
         '500' : '500px'
       },
       display: ['hover', 'focus'],
+      gridTemplateColumns: {
+          'custom-chart' : 'max-content max-content auto'
+      },
+      gridTemplateRows: {
+          'custom-chart' : 'max-content'
+      }
     },
   },
   variants: {

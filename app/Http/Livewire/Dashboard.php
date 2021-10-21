@@ -170,6 +170,7 @@ class Dashboard extends Component
             array_push($ipk_pemilih,$ipk_pemilih_per_instansi);
 
         }
+        // dd($this->count_instansi);
         $this->dispatchBrowserEvent('count_instansi_update', [
             'data' => $this->count_instansi,
             'data_pemilih' => $data_pemilih,
