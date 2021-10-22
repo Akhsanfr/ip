@@ -2324,6 +2324,10 @@ html {
   position: relative;
 }
 
+.sticky {
+  position: sticky;
+}
+
 .top-0 {
   top: 0px;
 }
@@ -2344,8 +2348,28 @@ html {
   right: 0px;
 }
 
+.right-4 {
+  right: 1rem;
+}
+
+.right-16 {
+  right: 4rem;
+}
+
+.bottom-4 {
+  bottom: 1rem;
+}
+
+.bottom-16 {
+  bottom: 4rem;
+}
+
 .left-0 {
   left: 0px;
+}
+
+.z-40 {
+  z-index: 40;
 }
 
 .z-50 {
@@ -2392,6 +2416,10 @@ html {
   margin-top: 0.5rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .mt-16 {
   margin-top: 4rem;
 }
@@ -2420,6 +2448,10 @@ html {
   display: none;
 }
 
+.h-4 {
+  height: 1rem;
+}
+
 .h-5 {
   height: 1.25rem;
 }
@@ -2434,6 +2466,10 @@ html {
 
 .h-12 {
   height: 3rem;
+}
+
+.h-16 {
+  height: 4rem;
 }
 
 .h-full {
@@ -2468,12 +2504,22 @@ html {
   width: 3rem;
 }
 
+.w-96 {
+  width: 24rem;
+}
+
 .w-full {
   width: 100%;
 }
 
 .w-screen {
   width: 100vw;
+}
+
+.w-min {
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
 }
 
 .flex-1 {
@@ -2590,6 +2636,10 @@ html {
   flex-direction: column;
 }
 
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+
 .content-start {
   align-content: flex-start;
 }
@@ -2680,6 +2730,10 @@ html {
 
 .rounded-lg {
   border-radius: 0.5rem;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
 }
 
 .rounded-2xl {
@@ -2830,6 +2884,10 @@ html {
   font-weight: 700;
 }
 
+.leading-4 {
+  line-height: 1rem;
+}
+
 .text-primary {
   --tw-text-opacity: 1;
   color: hsla(var(--p) / var(--tw-text-opacity));
@@ -2838,6 +2896,11 @@ html {
 .text-primary-content {
   --tw-text-opacity: 1;
   color: hsla(var(--pc) / var(--tw-text-opacity));
+}
+
+.text-neutral {
+  --tw-text-opacity: 1;
+  color: hsla(var(--n) / var(--tw-text-opacity));
 }
 
 .text-base-200 {

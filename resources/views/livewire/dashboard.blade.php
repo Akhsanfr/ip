@@ -124,8 +124,9 @@
         :jumlah-partisipan-kelas="$data['partisipan_pilihan_tiga_kelas']"
     ></x-pilihan>
 
+    {{-- GRAFIK INSTANSI --}}
     <div
-        class="fixed top-0 left-0 w-screen h-screen flex justify-center items-center bg-neutral bg-opacity-95 z-50 p-8"
+        class="fixed top-0 left-0 w-screen h-screen flex justify-center items-center bg-neutral bg-opacity-95 z-40 p-8"
         x-show="$wire.count_instansi"
         x-transition
         >
@@ -142,6 +143,9 @@
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </div>
+            </div>
+            <div class="p-4 card bg-accent flex-shrink-0 sticky top-0 z-50" id="pesan_rank">
+                Klik grafik dibawah untuk memperoleh informasi yang lebih lengkap!
             </div>
             <div class="flex flex-col lg:flex-row flex-grow gap-4">
                 <div class="p-4 card bg-base-100 w-full lg:w-3/4 flex-shrink-0 lg:flex-shrink gap-x-2 grid grid-cols-custom-chart grid-rows-custom-chart items-center content-start" id="chart_instansi">
@@ -178,9 +182,6 @@
                         </ul>
                     </div>
                 </div>
-            </div>
-            <div class="p-4 card bg-base-100 flex-shrink-0" id="pesan_rank">
-                Arahkan pointer ke grafik diatas untuk memperoleh infomaris yang lebih lengkap!
             </div>
         </div>
     </div>
@@ -294,6 +295,8 @@
     </div>
 </div>
 
+
+
 <script>
 // Chart IP
 const labels = [
@@ -373,11 +376,11 @@ window.addEventListener('count_instansi_update', event => {
             pilihan_saya = `text-primary`
         }
         grafik += `
-                <div data-tip="${i.nama}" class="tooltip tooltip-primary tooltip-right z-50 cursor-pointer flex justify-end ">
-                    <span onMouseover="showIpkInstansi(${index}, '${i.nama_singkatan}')" class="text-right instansi ${pilihan_saya}" data-index-instansi="${index}" data-nama-instansi="${i.nama_singkatan}">${i.nama_singkatan}</span>
+                <div data-tip="${i.nama}" class="tooltip tooltip-primary tooltip-right z-40 cursor-pointer flex justify-end ">
+                    <span onClick="showIpkInstansi(${index}, '${i.nama_singkatan}')" class="text-right instansi ${pilihan_saya}" data-index-instansi="${index}" data-nama-instansi="${i.nama_singkatan}">${i.nama_singkatan}</span>
                 </div>
                 <span>(${i.jumlah})</span>
-                <progress class="progress progress-primary cursor-pointer" value="${i.jumlah}" max="${instansi_peminat_terbanyak}"></progress>
+                <progress onClick="showIpkInstansi(${index}, '${i.nama_singkatan}')" class="progress progress-primary cursor-pointer" value="${i.jumlah}" max="${instansi_peminat_terbanyak}"></progress>
         `
     })
     // Isi grafik

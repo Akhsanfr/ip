@@ -469,6 +469,7 @@ class Dashboard extends Component
                 ->join('users',$tabel.'.user_id', '=', 'users.id')
                 ->join('kelas', 'kelas.npm', '=', 'users.npm')
                 ->where('kelas', $this->user_kelas)
+                ->where('instansi_id','!=',  null)
                 ->count();
     }
     public function render()

@@ -43,6 +43,28 @@
     <div>
         {{ $slot }}
     </div>
+    <div class="fixed bottom-4 right-4" x-data="{show:false}" @click.outside="show=false">
+        <div class="relative">
+            <img src="{{ asset('contribution.png') }}" alt="" class=" h-16 cursor-pointer" @click="show=!show">
+            <div class="bg-accent bottom-16 right-16 p-4 absolute rounded-xl w-96" x-transition x-show="show">
+                <p class="text-neutral leading-4">Hai, <strong>Temanset!</strong> Ada saran maupun kritik dengan website ini? Atau kamu ingin berkontribusi untuk melengkapi data yang kurang? Yuk hubungi <strong>admin</strong> atau isi aja <strong>formulir</strong> dibawah ini.</p>
+                <div class="flex flex-row space-x-2 mt-4 w-min">
+                    <a href="https://wa.me/6282311357266" target="_blank" class="btn btn-primary btn-outline btn-sm flex-nowrap space-x-2">
+                        <img src="{{ asset('whatsapp.png') }}" alt="" class="h-4">
+                        <span>Taufik</span>
+                    </a>
+                    <a href="https://wa.me/6285790417607" target="_blank" class="btn btn-primary btn-outline btn-sm flex-nowrap space-x-2">
+                        <img src="{{ asset('whatsapp.png') }}" alt="" class="h-4">
+                        <span>fr</span>
+                    </a>
+                    <a href="https://forms.gle/SuyNcQryyZAwsZTk9" target="_blank" class="btn btn-primary btn-outline btn-sm flex-nowrap space-x-2">
+                        <img src="{{ asset('forms.png') }}" alt="" class="h-4">
+                        <span>Formulir</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
     @livewireScripts
     <script>
         function tema(){
