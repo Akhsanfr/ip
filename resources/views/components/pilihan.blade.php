@@ -14,7 +14,7 @@
                 <div x-show="show" x-transition class="absolute z-50 top-10 card bg-primary text-base-content text-left p-4 max-h-80 overflow-y-auto">
                     <ul>
                         @forelse($instansis as $instansi)
-                            <li class="hover:bg-opacity-25 hover:bg-neutral cursor-pointer whitespace-nowrap " wire:click="{{$wireClick}}({{ $instansi->id }})">{{$instansi->nama}}</li>
+                            <li class="hover:bg-opacity-25 hover:bg-neutral cursor-pointer whitespace-nowrap " wire:click="{{$wireClick}}({{ $instansi->id }})">{{$instansi->nama_singkatan}}</li>
                         @empty
                             <option>No data available</option>
                         @endforelse

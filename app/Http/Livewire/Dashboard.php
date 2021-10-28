@@ -43,7 +43,7 @@ class Dashboard extends Component
     public $jumlah_instansi_dua;
     public $jumlah_instansi_tiga;
     // Izin update
-    public $update;
+    // public $update;
     // pesan
     public $pesan;
     // Count Instansi
@@ -63,27 +63,30 @@ class Dashboard extends Component
     // Pilih Instansi
 
     public function pilihan_satu($id){
-        if($this->update){
+        if(Aktif::where('nama', 'update pilihan')->first()->is_active){
             $this->pilihan_satu->instansi_id = $id;
             $this->pilihan_satu->save();
+            $this->emit('alert', ['info', 'Perubahan data berhasil']);
             $this->mount();
         } else {
             $this->emit('alert', ['error', 'Maaf, masa perubahan data telah usai.']);
         }
     }
     public function pilihan_dua($id){
-        if($this->update){
+        if(Aktif::where('nama', 'update pilihan')->first()->is_active){
             $this->pilihan_dua->instansi_id = $id;
             $this->pilihan_dua->save();
+            $this->emit('alert', ['info', 'Perubahan data berhasil']);
             $this->mount();
         } else {
             $this->emit('alert', ['error', 'Maaf, masa perubahan data telah usai.']);
         }
     }
     public function pilihan_tiga($id){
-        if($this->update){
+        if(Aktif::where('nama', 'update pilihan')->first()->is_active){
             $this->pilihan_tiga->instansi_id = $id;
             $this->pilihan_tiga->save();
+            $this->emit('alert', ['info', 'Perubahan data berhasil']);
             $this->mount();
         } else {
             $this->emit('alert', ['error', 'Maaf, masa perubahan data telah usai.']);
@@ -235,7 +238,7 @@ class Dashboard extends Component
         }
 
         // Izinkan update
-        $this->update = Aktif::where('nama', 'update pilihan')->first()->is_active;
+        // $this->update = Aktif::where('nama', 'update pilihan')->first()->is_active;
 
         // Array data yang akan dikirim ke view
         $this->data = [];

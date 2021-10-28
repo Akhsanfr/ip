@@ -1,5 +1,5 @@
 
-<div class="grid grid-cols-12 p-8 text-base-content gap-x-4 gap-y-4 items-stretch" x-data>
+<div class="grid grid-cols-12 p-8 text-base-content gap-x-4 gap-y-4 items-stretch" x-data >
 
     <livewire:component.alert class="col-span-12">
     <div class="col-span-12">
@@ -96,7 +96,7 @@
         wire-model="pilihan_satu.instansi_id"
         wire-click="pilihan_satu"
         :instansis="$instansis"
-        :pilihan-instansi="$pilihan_satu->instansi->nama ?? null"
+        :pilihan-instansi="$pilihan_satu->instansi->nama_singkatan ?? null"
         :jumlah-instansi="$jumlah_instansi_satu"
         pilihan="pilihan_satus"
         :jumlah-partisipan-kelas="$data['partisipan_pilihan_satu_kelas']"
@@ -298,6 +298,13 @@
 
 
 <script>
+// function alert(){
+//     return {
+//         alert : Livewire.on('pesan', e => {
+//                 alert = e.Data;
+//             })
+//         }
+// }
 // Chart IP
 const labels = [
   '1',

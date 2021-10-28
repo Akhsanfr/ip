@@ -7,22 +7,19 @@ use Livewire\Component;
 class Alert extends Component
 {
     public $isi;
-    public $class_lama;
-    public $class_baru;
-    public $class_fix;
+    public $class;
+    public $tipe;
 
     protected $listeners = ['alert'];
 
     public function alert($pesan){
         $this->tipe = $pesan[0];
         $this->isi = $pesan[1];
-        $this->class_baru = ' text-'.$pesan[0].' bg-'.$pesan[0];
-        $this->mount($this->class_lama);
-    }
-
-    public function mount($class){
-        $this->class_lama = $class;
-        $this->class_fix = $this->class_lama . ' ' . $this->class_baru;
+        if($this->tipe == 'error'){
+            $this->class = 'alert alert-error';
+        } elseif($this->tipe == 'info'){
+            $this->class = 'alert alert-info';
+        }
     }
 
     public function close(){

@@ -2428,10 +2428,6 @@ html {
   margin-bottom: 1rem;
 }
 
-.ml-auto {
-  margin-left: auto;
-}
-
 .flex {
   display: flex;
 }
@@ -2800,10 +2796,6 @@ html {
 
 .bg-opacity-5 {
   --tw-bg-opacity: 0.05;
-}
-
-.bg-opacity-25 {
-  --tw-bg-opacity: 0.25;
 }
 
 .bg-opacity-95 {

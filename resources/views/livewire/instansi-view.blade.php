@@ -2,7 +2,7 @@
 <script src="{{ asset('sortable.min.js') }}"></script>
 
 
-<div class="p-8 space-y-8">
+<div class="p-8 space-y-8 text-base-100">
     <a href="{{ route('dashboard') }}" class="btn btn-primary btn-block">Dashboard</a>
     <div class="card shadow-xl p-8 bg-base-200">
         <div class="overflow-x-auto">
