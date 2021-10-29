@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-    <script src="{{ mix('js/app.js') }}"></script>
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+    <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
+    <script src="{{ mix('/js/app.js') }}"></script>
     <link rel="shortcut icon" href="{{ asset('logo.png') }}" type="image/x-icon">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <title>Cek your IP</title>
@@ -32,6 +31,9 @@
             <img src="{{ session('user')->avatar }}" alt="" class="rounded-full overflow-hidden h-8 w-8 cursor-pointer">
             <div class="absolute z-50 top-12 right-0" x-show="menu" x-transition>
                 <ul class="menu py-3 shadow-lg bg-base-200 rounded-lg">
+                    <li>
+                        <a  href="{{ route('auth.change-email') }}" class="whitespace-nowrap">Ubah Email</a>
+                    </li>
                     <li>
                         <a  href="{{ route('auth.logout') }}">Logout</a>
                     </li>

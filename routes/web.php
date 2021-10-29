@@ -33,6 +33,8 @@ Route::get('/guest', function(){return view('guest');})->name('guest');
 Route::get('/auth/redirect', [AuthController::class, 'redirect'])->name('auth.login');
 Route::get('/auth/callback', [AuthController::class, 'proses']);
 Route::get('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
+Route::get('/auth/change-email', [AuthController::class, 'changeEmail'])->name('auth.change-email');
+
 
 Route::get('/nilai-satu', Sem1::class)->middleware('user');
 Route::get('/nilai-dua', Sem2::class)->middleware('user');

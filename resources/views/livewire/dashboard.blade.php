@@ -2,6 +2,25 @@
 <div class="grid grid-cols-12 p-8 text-base-content gap-x-4 gap-y-4 items-stretch" x-data >
 
     <livewire:component.alert class="col-span-12">
+
+    <div class="alert alert-success col-span-12" x-data="{show : '{{ session('pesan') }}'}" x-show="show" >
+        <div class="flex-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 mx-2 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+            </svg>
+            <label>Email berhasil diubah menjadi {{ session('user')->email }}</label>
+        </div>
+    </div>
+    @if(str_contains(session('user')->email, 'pknstan.ac.id'))
+    <div class="alert alert-warning col-span-12">
+        <div class="flex-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 mx-2 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+            </svg>
+            <label>Kamu sedang mengakses website ini menggunakan Email kampus ({{ session('user')->email }}). Segera ganti dengan email pribadimu sekarang! <a href="{{ route('auth.change-email') }}" class="btn btn-primary btn-sm">Ubah Email</a></label>
+        </div>
+    </div>
+    @endif
     <div class="col-span-12">
         <a href="{{ route('instansi.view') }}" class="btn btn-primary btn-block">Daftar Instansi</a>
     </div>
