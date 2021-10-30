@@ -126,7 +126,7 @@
         wire-model="pilihan_dua.instansi_id"
         wire-click="pilihan_dua"
         :instansis="$instansis"
-        :pilihan-instansi="$pilihan_dua->instansi->nama ?? null"
+        :pilihan-instansi="$pilihan_dua->instansi->nama_singkatan ?? null"
         :jumlah-instansi="$jumlah_instansi_dua"
         pilihan="pilihan_duas"
         :jumlah-partisipan-kelas="$data['partisipan_pilihan_dua_kelas']"
@@ -137,7 +137,7 @@
         wire-model="pilihan_tiga.instansi_id"
         wire-click="pilihan_tiga"
         :instansis="$instansis"
-        :pilihan-instansi="$pilihan_tiga->instansi->nama ?? null"
+        :pilihan-instansi="$pilihan_tiga->instansi->nama_singkatan ?? null"
         :jumlah-instansi="$jumlah_instansi_tiga"
         pilihan="pilihan_tigas"
         :jumlah-partisipan-kelas="$data['partisipan_pilihan_tiga_kelas']"
@@ -381,6 +381,7 @@ let data_pemilih = null
 let ipk_pemilih = null
 let chart_instansi = '';
 let data_instansi = '';
+let urutan_pilihan;
 window.addEventListener('count_instansi_update', event => {
     // Set data dari fetch
     this.data_pemilih = event.detail.data_pemilih;
@@ -388,25 +389,33 @@ window.addEventListener('count_instansi_update', event => {
     this.ipk_saya = event.detail.ipk_saya;
     this.pilihan_saya = event.detail.pilihan_saya;
     this.data_instansi = event.detail.data;
+    this.urutan_pilihan = event.detail.urutan_pilihan;
     let target = document.getElementById('chart_instansi');
+    // console.log(this.urutan_pilihan);
     // Hapus canvas jika telah ada
     while(target.firstChild){
       target.firstChild.remove();
     }
     // Siapkan grafik
     let grafik = ``;
-    let instansi_peminat_terbanyak = this.data_instansi[0].jumlah;
+    let instansi_peminat_terbanyak = this.data_instansi[0].jumlah_satu + this.data_instansi[0].jumlah_dua + this.data_instansi[0].jumlah_tiga;
+    // console.log(instansi_peminat_terbanyak);
     this.data_instansi.forEach((i, index)=>{
         pilihan_saya = ``
-        if(this.pilihan_saya == i.nama){
+        if(this.pilihan_saya == i.nama_singkatan){
             pilihan_saya = `text-primary`
         }
         grafik += `
                 <div data-tip="${i.nama}" class="tooltip tooltip-primary tooltip-right z-40 cursor-pointer flex justify-end ">
                     <span onClick="showIpkInstansi(${index}, '${i.nama_singkatan}')" class="text-right instansi ${pilihan_saya}" data-index-instansi="${index}" data-nama-instansi="${i.nama_singkatan}">${i.nama_singkatan}</span>
                 </div>
-                <span>(${i.jumlah})</span>
-                <progress onClick="showIpkInstansi(${index}, '${i.nama_singkatan}')" class="progress progress-primary cursor-pointer" value="${i.jumlah}" max="${instansi_peminat_terbanyak}"></progress>
+                <span>(${i.jumlah_satu + i.jumlah_dua + i.jumlah_tiga })</span>
+
+                <div class="bg-base-200 rounded-xl overflow-hidden h-2 cursor-pointer" onClick="showIpkInstansi(${index}, '${i.nama_singkatan}')">
+                    <div class="bg-red-500 h-full float-left" style="width:${i.jumlah_satu*100 / instansi_peminat_terbanyak}%"></div>
+                    <div class="bg-yellow-500 h-full float-left" style="width:${i.jumlah_dua*100 / instansi_peminat_terbanyak}%"></div>
+                    <div class="bg-blue-500 h-full float-left" style="width:${i.jumlah_tiga*100 / instansi_peminat_terbanyak}%"></div>
+                </div>
         `
     })
     // Isi grafik
@@ -438,10 +447,10 @@ function showIpkInstansi(index_instansi, nama_instansi){
 
         // CANVAS IPK
         const data_ipk = {
-            labels : this.ipk_pemilih[index_instansi].map((val, index) => {return index}),
+            labels : this.ipk_pemilih[index_instansi][0].map((val, index) => {return '1 - '+index}).concat(this.ipk_pemilih[index_instansi][1].map((val, index) => {return '2 - '+index}), this.ipk_pemilih[index_instansi][2].map((val, index) => {return '3 - '+index})),
             datasets: [{
                 label: 'Nilai pemilih '+ nama_instansi,
-                data: this.ipk_pemilih[index_instansi],
+                data: this.ipk_pemilih[index_instansi][0].concat(this.ipk_pemilih[index_instansi][1], this.ipk_pemilih[index_instansi][2]),
                 backgroundColor: '#2aa79b',
                 borderColor: '#2aa79b',
                 borderWidth : 1,
@@ -489,18 +498,63 @@ function showIpkInstansi(index_instansi, nama_instansi){
         );
 
         // PESAN PERINGKAT
+        // Tampilkan pesan
+        pesan_rank = document.getElementById('pesan_rank');
+        // Cek sedang membuka prioritas berapa
+        if(this.urutan_pilihan == 'pilihan_satus'){
+            urutan = '<strong class="text-red-500">pertama</strong>'
+            rank_per_pilihan = getRank(index_instansi, 0);
+            rank_jenjang = rank_per_pilihan;
+        } else if(this.urutan_pilihan == 'pilihan_duas') {
+            urutan = '<strong class="text-yellow-500">kedua</strong>'
+            rank_per_pilihan = getRank(index_instansi, 1);
+            rank_jenjang = rank_per_pilihan + this.ipk_pemilih[index_instansi][0].length ;
+        } else {
+            urutan = '<strong class="text-blue-500">ketiga</strong>'
+            rank_per_pilihan = getRank(index_instansi, 2);
+            rank_jenjang = rank_per_pilihan + this.ipk_pemilih[index_instansi][0].length + this.ipk_pemilih[index_instansi][1].length ;
+        }
+        rank_mix = getRankMix(index_instansi);
+        pesan_rank.innerHTML = `<p class="text-base-content">Jika kamu memilih <span class="font-bold text-primary">${nama_instansi}</span> pada pilihan ${urutan} sekarang, maka : <br>
+            <ul class="list-disc">
+                <li class="flex flex-row"><p>Pada pilihan ${urutan} saja, kamu akan berada di peringkat <strong>${rank_per_pilihan}</strong>.</p><svg onClick="info(1)" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 cursor-pointer" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg></li>
+                <li class="flex flex-row"><p>Berdasarkan urutan pilihan, kamu akan berada di peringkat <strong>${rank_jenjang}</strong>.</p><svg onClick="info(2)" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 cursor-pointer" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg></li>
+                <li class="flex flex-row"><p>Berdasarkan nilai keseluruhan, kamu akan berada di peringkat <strong>${rank_mix}</strong>.</p><svg onClick="info(3)" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 cursor-pointer" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg></li>
+            </ul>
+            </p>`
+    }
 
+    function getRank(index_instansi, urutan){
         let ipk_gabungan = [];
-        ipk_pemilih = this.ipk_pemilih[index_instansi];
+        ipk_pemilih = this.ipk_pemilih[index_instansi][urutan];
         ipk_saya = this.ipk_saya;
         ipk_gabungan = [...ipk_pemilih];
         ipk_gabungan.push(ipk_saya);
         ipk_gabungan.sort();
         ipk_gabungan.reverse();
-        rank = ipk_gabungan.indexOf(ipk_saya);
-        pesan_rank = document.getElementById('pesan_rank');
-        pesan_rank.innerHTML = `<p class="text-base-content">Jika kamu memilih <span class="font-bold">${nama_instansi}</span> sekarang, kamu akan berada di peringkat ${rank + 1}</p>`
+        return ipk_gabungan.indexOf(ipk_saya) + 1;
+    }
+
+    function getRankMix(index_instansi){
+        let ipk_gabungan = [];
+        ipk_pemilih = this.ipk_pemilih[index_instansi][0].concat(this.ipk_pemilih[index_instansi][1], this.ipk_pemilih[index_instansi][2]);
+        ipk_saya = this.ipk_saya;
+        ipk_gabungan = [...ipk_pemilih];
+        ipk_gabungan.push(ipk_saya);
+        ipk_gabungan.sort();
+        ipk_gabungan.reverse();
+        return ipk_gabungan.indexOf(ipk_saya) + 1;
+    }
+
+    function info(no){
+        if(no == 1){
+            alert('Peringkat pada pilihan yang sedang kamu pilih saja.')
+        } else if(no == 2){
+            alert('Peringkat dengan mendahulukan prioritas pilihan, misal nilai rendah pada pilihan pertama akan lebih tinggi peringkatnya daripada nilai yang tinggi tetapi memilih pilihan 2.')
+        } else {
+            alert('Peringkat dengan menggabungkan semua nilai pada instansi yang sedang kamu pilih, tidak mempertimbangkan prioritas pilihan.')
         }
+    }
 
 
 </script>

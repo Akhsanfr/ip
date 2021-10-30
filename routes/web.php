@@ -22,8 +22,14 @@ use App\Http\Livewire\Nilai\Sem5;
 use App\Http\Livewire\Nilai\Sem6;
 use App\Http\Livewire\Nilai\Skd;
 use App\Models\NilaiSemDua;
+use App\Models\NilaiSemEnam;
 
-// Route::get('/', [HomeController::class, 'index'])->name('home');
+// Route::get('/', function(){
+//     return view('maintenance');
+// });
+// Route::get('/{i}', function(){
+//     return view('maintenance');
+// });
 Route::get('/', Dashboard::class)->name('dashboard')->middleware('user');
 Route::get('/instansi', Instansi::class)->name('instansi')->middleware(['user', 'admin']);
 Route::get('/instansi/edit/{id}', InstansiEdit::class)->name('instansi.edit')->middleware(['user', 'admin']);
@@ -63,6 +69,27 @@ Route::get('/gen-sem-dua', function(){
 
         $sks = 23;
         $jumlah_nilai = bcadd(bcadd(bcadd(bcadd(bcadd(bcadd(bcadd(bcadd($pancasila, $bing),$mikro),$pajak),$ppkn), $pengakun2),$hukperus),$hukper),$piutang);
+        $nilai_user->ip = bcdiv($jumlah_nilai, $sks);
+        $nilai_user->save();
+    }
+
+})->middleware(['user', 'admin']);
+
+Route::get('/gen-sem-enam', function(){
+    $datas = NilaiSemEnam::all();
+    foreach($datas as $data){
+        $id = $data->id;
+        $nilai_user = NilaiSemEnam::find($id);
+
+        bcscale(100);
+        $pu2 = bcmul($data->pu2, 3);
+        $manris = bcmul($data->manris, 2);
+        $etikor = bcmul($data->etikor, 3);
+        $bnpk = bcmul($data->bnpk, 3);
+        $ktta = bcmul($data->ktta, 2);
+
+        $sks = 13;
+        $jumlah_nilai = bcadd(bcadd(bcadd(bcadd($pu2, $manris),$etikor),$bnpk),$ktta);
         $nilai_user->ip = bcdiv($jumlah_nilai, $sks);
         $nilai_user->save();
     }

@@ -119,67 +119,74 @@ class Dashboard extends Component
                 return false;
             }
             $this->prioritas_instansi = 'Pilihan pertama';
-            $pilihan_saya = $this->pilihan_satu->instansi->nama;
+            $pilihan_saya = $this->pilihan_satu->instansi->nama_singkatan;
         } elseif($pilihan == 'pilihan_duas'){
             if($this->pilihan_dua->instansi_id == null){
                 $this->emit('alert', ['error', 'Maaf, silakan kamu memilih intansi terlebih dahulu.']);
                 return false;
             }
             $this->prioritas_instansi = 'Pilihan kedua';
-            $pilihan_saya = $this->pilihan_dua->instansi->nama;
+            $pilihan_saya = $this->pilihan_dua->instansi->nama_singkatan;
         } else {
             if($this->pilihan_tiga->instansi_id == null){
                 $this->emit('alert', ['error', 'Maaf, silakan kamu memilih intansi terlebih dahulu.']);
                 return false;
             }
             $this->prioritas_instansi = 'Pilihan ketiga';
-            $pilihan_saya = $this->pilihan_tiga->instansi->nama;
+            $pilihan_saya = $this->pilihan_tiga->instansi->nama_singkatan;
         }
-        $this->count_instansi = Instansi::with($pilihan.'.user')->withCount([$pilihan.' as jumlah'])->orderByDesc('jumlah')->get();
+        $this->count_instansi = Instansi::
+            with([
+                'pilihan_satus.user',
+                'pilihan_duas.user',
+                'pilihan_tigas.user'
+                ])
+            ->withCount([
+                'pilihan_satus as jumlah_satu',
+                'pilihan_duas as jumlah_dua',
+                'pilihan_tigas as jumlah_tiga',
+                // 'pilihan_satus + pilihan_duas + pilihan_tigas as jumlah_all'
+                ])
+                ->orderBy(DB::raw("`jumlah_satu` + `jumlah_dua` + `jumlah_tiga`"), 'desc')->get();
+            // ->orderByDesc('jumlah_satus + jumlah_duas')->get();
         $data_pemilih = [];
         $ipk_pemilih = [];
         for($i = 0; $i < count($this->count_instansi); $i++){
-            if($pilihan === 'pilihan_satus'){
-                $pilihan_instansi = $this->count_instansi[$i]->pilihan_satus;
-            } elseif($pilihan === 'pilihan_duas') {
-                $pilihan_instansi = $this->count_instansi[$i]->pilihan_duas;
-                $pilihan_instansi = $this->count_instansi[$i]->pilihan_duas;
-            } elseif($pilihan === 'pilihan_tigas') {
-                $pilihan_instansi = $this->count_instansi[$i]->pilihan_tigas;
-            } else {
-                dd($pilihan);
-            }
+            //
+            $pilihan_instansi[0] = $this->count_instansi[$i]->pilihan_satus;
+            $pilihan_instansi[1] = $this->count_instansi[$i]->pilihan_duas;
+            $pilihan_instansi[2] = $this->count_instansi[$i]->pilihan_tigas;
+            //
             $data_pemilih_per_instansi = [];
-            $ipk_pemilih_per_instansi = [];
-            foreach($pilihan_instansi as $user){
-                if($user->user->is_anonim){
-                    array_push($data_pemilih_per_instansi, 'anonim');
-                } else {
-                    array_push($data_pemilih_per_instansi, $user->user->name);
-                    // skd * 100% / 500
+            $ipk_pemilih_per_instansi[0] = [];
+            $ipk_pemilih_per_instansi[1] = [];
+            $ipk_pemilih_per_instansi[2] = [];
+            for($j = 0; $j < 3; $j++){
+                foreach($pilihan_instansi[$j] as $user){
+                    if($user->user->is_anonim){
+                        array_push($data_pemilih_per_instansi, 'anonim');
+                    } else {
+                        array_push($data_pemilih_per_instansi, $user->user->name);
+                    }
+                    $nilai_gabungan_final = $this->ubah_ipk_skd($user->user->ipk, $user->user->skd->skd ?? 0);
+                    array_push($ipk_pemilih_per_instansi[$j], $nilai_gabungan_final);
                 }
-                // $nilai_skd_100 = bcdiv($user->user->skd->skd ?? 0,500,100); // nilai dalam rentang 1-100
-                // $nilai_ipk_100 = bcdiv($user->user->ipk, 4, 100);
-                // $nilai_skd_proporsi = bcmul($this->proporsi_skd, $nilai_skd_100, 100);
-                // $nilai_ipk_proporsi = bcmul($this->proporsi_ipk, $nilai_ipk_100, 100);
-                // $nilai_gabungan_final = bcadd($nilai_ipk_proporsi, $nilai_skd_proporsi, 100);
-                // $nilai_gabungan_final = bcmul($nilai_gabungan_final, 100, 100); // buat rentang 0 - 100
-                $nilai_gabungan_final = $this->ubah_ipk_skd($user->user->ipk, $user->user->skd->skd ?? 0);
-                array_push($ipk_pemilih_per_instansi, $nilai_gabungan_final);
             }
             sort($data_pemilih_per_instansi);
-            sort($ipk_pemilih_per_instansi);
+            rsort($ipk_pemilih_per_instansi[0]);
+            rsort($ipk_pemilih_per_instansi[1]);
+            rsort($ipk_pemilih_per_instansi[2]);
             array_push($data_pemilih,$data_pemilih_per_instansi);
             array_push($ipk_pemilih,$ipk_pemilih_per_instansi);
 
         }
-        // dd($this->count_instansi);
         $this->dispatchBrowserEvent('count_instansi_update', [
             'data' => $this->count_instansi,
             'data_pemilih' => $data_pemilih,
             'ipk_pemilih' => $ipk_pemilih,
             'pilihan_saya' => $pilihan_saya,
             'ipk_saya' => $this->ubah_ipk_skd($this->ipk_saya, $this->skd_saya),
+            'urutan_pilihan' => $pilihan
         ]);
     }
     public function close_instansi(){
@@ -425,9 +432,9 @@ class Dashboard extends Component
         $ip_3 = bcmul($this->data['nilai_sem_tiga'] ??0 , 23 );
         $ip_4 = bcmul($this->data['nilai_sem_empat'] ??0 , 23 );
         $ip_5 = bcmul($this->data['nilai_sem_lima'] ??0 , 18 );
-        $ip_6 = bcmul($this->data['nilai_sem_enam'] ??0 , 16 );
+        $ip_6 = bcmul($this->data['nilai_sem_enam'] ??0 , 13 );
         $jumlah_ip = bcadd($ip_1,bcadd($ip_2,bcadd($ip_3, bcadd($ip_4, bcadd($ip_5,$ip_6 )))));
-        $this->user->ipk = bcdiv($jumlah_ip, 122);
+        $this->user->ipk = bcdiv($jumlah_ip, 119);
         $this->user->save();
 
         // Show nilai IPK
